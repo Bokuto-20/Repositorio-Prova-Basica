@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>BlackWall - Interface</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Reset e estilo básico */
+    * { margin:0; padding:0; box-sizing:border-box; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: linear-gradient(135deg, #2c3e50, #4ca1af); min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px; color:#333; }
+    .container { background:#fff; padding:30px; border-radius:16px; box-shadow:0px 8px 24px rgba(0,0,0,0.25); width:100%; max-width:600px; }
+    h1 { text-align:center; margin-bottom:20px; font-size:2rem; color:#2c3e50; }
+    h2 { margin-bottom:15px; color:#2c3e50; }
+
+    .form-section, .list-section { margin-bottom:30px; }
+
+    form { display:flex; flex-direction:column; gap:15px; }
+    .input-group input { padding:12px; border:1px solid #ccc; border-radius:8px; font-size:1rem; transition:all 0.3s ease; width:100%; }
+    .input-group input:focus { border-color:#4ca1af; outline:none; box-shadow:0 0 6px rgba(76,161,175,0.5); }
+
+    .btn { padding:10px 15px; border:none; border-radius:8px; font-size:1rem; font-weight:bold; cursor:pointer; transition:all 0.3s ease; }
+    .btn.primary { background:#4ca1af; color:#fff; }
+    .btn.primary:hover { background:#357f8e; }
+    .btn.secondary { background:#fff; border:2px solid #4ca1af; color:#4ca1af; }
+    .btn.secondary:hover { background:#4ca1af; color:#fff; }
+
+    #response { margin-top:15px; padding:12px; border-radius:8px; text-align:center; font-weight:bold; display:none; }
+    #response.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; display:block; }
+    #response.error { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; display:block; }
+
+    .user-list { list-style:none; margin-top:15px; }
+    .user-card { background:#f4f4f4; padding:10px 15px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; }
+    .user-card .actions button { margin-left:5px; }
+    .user-card .actions .edit { background:#ffc107; color:#fff; }
+    .user-card .actions .edit:hover { background:#e0a800; }
+    .user-card .actions .delete { background:#dc3545; color:#fff; }
+    .user-card .actions .delete:hover { background:#c82333; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚡ BlackWall - Interface da API</h1>
+
+    <!-- Criar Usuário -->
+    <section class="form-section">
+      <h2>Criar Usuário</h2>
+      <form onsubmit="event.preventDefault(); criarUsuario();">
+        <div class="input-group">
+          <input id="name" placeholder="Nome" required>
+        </div>
+        <div class="input-group">
+          <input id="email" type="email" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+          <input id="password" type="password" placeholder="Senha" required>
+        </div>
+        <button type="submit" class="btn primary">Criar Usuário</button>
+      </form>
+      <div id="response"></div>
+    </section>
+
+    <!-- Lista de Usuários -->
+    <section class="list-section">
+      <h2>Lista de Usuários</h2>
+      <button class="btn secondary" onclick="listarUsuarios()">🔄 Atualizar Lista</button>
+      <ul id="usuarios" class="user-list"></ul>
+    </section>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:8080/blackwall";
+    const AUTH = "Basic " + btoa("admin:123"); // Usuário e senha do Basic Auth
+
+    async function criarUsuario() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const mensagem = document.getElementById("response");
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": AUTH },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        if (response.ok) {
+          mensagem.textContent = "✅ Usuário cadastrado com sucesso!";
+          mensagem.className = "success";
+          listarUsuarios();
+        } else {
+          const erro = await response.text();
+          mensagem.textContent = `❌ Erro: ${erro}`;
+          mensagem.className = "error";
+        }
+      } catch (err) {
+        console.error(err);
+        mensagem.textContent = "❌ Erro de conexão com a API.";
+        mensagem.className = "error";
+      }
+    }
+
+    async function listarUsuarios() {
+      const lista = document.getElementById("usuarios");
+      lista.innerHTML = "";
+
+      try {
+        const response = await fetch(API_URL, { headers: { "Authorization": AUTH } });
+        const usuarios = await response.json();
+
+        usuarios.forEach(u => {
+          const li = document.createElement("li");
+          li.className = "user-card";
+          li.innerHTML = `
+            <span><strong>${u.name}</strong> - ${u.email}</span>
+            <div class="actions">
+              <button class="btn edit" onclick="editarUsuario(${u.id})">✏️ Editar</button>
+              <button class="btn delete" onclick="deletarUsuario(${u.id})">🗑️ Deletar</button>
+            </div>
+          `;
+          lista.appendChild(li);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function editarUsuario(id) {
+      const novoNome = prompt("Novo nome:");
+      const novoEmail = prompt("Novo email:");
+      const novaSenha = prompt("Nova senha:");
+
+      if (!novoNome || !novoEmail || !novaSenha) return;
+
+      try {
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", "Authorization": AUTH },
+          body: JSON.stringify({ name: novoNome, email: novoEmail, password: novaSenha })
+        });
+
+        if (response.ok) {
+          alert("✅ Usuário atualizado!");
+          listarUsuarios();
+        } else {
+          const erro = await response.text();
+          alert("❌ Erro ao atualizar: " + erro);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function deletarUsuario(id) {
+      if (!confirm("Tem certeza que deseja deletar?")) return;
+
+      try {
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: "DELETE",
+          headers: { "Authorization": AUTH }
+        });
+
+        if (response.ok) {
+          alert("🗑️ Usuário deletado!");
+          listarUsuarios();
+        } else {
+          const erro = await response.text();
+          alert("❌ Erro ao deletar: " + erro);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Carregar a lista inicialmente
+    listarUsuarios();
+  </script>
+</body>
+</html>

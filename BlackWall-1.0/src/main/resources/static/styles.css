@@ -1,0 +1,165 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Fundo */
+  body {
+    background: linear-gradient(135deg, #2c3e50, #4ca1af);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* Container principal */
+  .container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 600px;
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  /* Títulos */
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
+  
+  h2 {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    color: #4ca1af;
+  }
+  
+  /* Inputs */
+  .input-group {
+    margin-bottom: 15px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  input:focus {
+    border-color: #4ca1af;
+    box-shadow: 0 0 8px rgba(76, 161, 175, 0.5);
+    outline: none;
+  }
+  
+  /* Botões */
+  .btn {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  
+  .btn.primary {
+    background: #4ca1af;
+    color: #fff;
+  }
+  
+  .btn.primary:hover {
+    background: #357f8e;
+  }
+  
+  .btn.secondary {
+    background: #2c3e50;
+    color: #fff;
+  }
+  
+  .btn.secondary:hover {
+    background: #1c2833;
+  }
+  
+  .btn.edit {
+    background: #f39c12;
+    color: #fff;
+    margin-left: 8px;
+  }
+  
+  .btn.edit:hover {
+    background: #d68910;
+  }
+  
+  .btn.delete {
+    background: #e74c3c;
+    color: #fff;
+    margin-left: 8px;
+  }
+  
+  .btn.delete:hover {
+    background: #c0392b;
+  }
+  
+  /* Lista de usuários */
+  .user-list {
+    list-style: none;
+    margin-top: 15px;
+  }
+  
+  .user-card {
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  /* Mensagens */
+  #response {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    display: none;
+  }
+  
+  #response.success {
+    display: block;
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    animation: fadeIn 0.6s ease;
+  }
+  
+  #response.error {
+    display: block;
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    animation: fadeIn 0.6s ease;
+  }
+  
+  /* Animações */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
